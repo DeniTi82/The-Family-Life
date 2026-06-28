@@ -1,6 +1,4 @@
-from pathlib import Path
-
-html = r"""<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
@@ -330,8 +328,3 @@ html = r"""<!DOCTYPE html>
   </script>
 </body>
 </html>
-"""
-
-path = Path("/mnt/data/family_daily_planner.html")
-path.write_text(html, encoding="utf-8")
-path.as_posix()
