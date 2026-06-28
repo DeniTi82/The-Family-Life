@@ -1,0 +1,337 @@
+from pathlib import Path
+
+html = r"""<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Семейный ежедневник</title>
+  <style>
+    :root {
+      --bg: #f7f3ec;
+      --card: rgba(255,255,255,.82);
+      --text: #2e2b26;
+      --muted: #7b7369;
+      --accent: #9c6b3f;
+      --accent2: #e9c89f;
+      --green: #8aa37b;
+      --red: #cf7d6f;
+      --shadow: 0 20px 50px rgba(88, 63, 37, .15);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, #fff2d8 0, transparent 34%),
+        radial-gradient(circle at bottom right, #dfe9d4 0, transparent 30%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .app { max-width: 1220px; margin: auto; padding: 28px; }
+
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 16px; margin-bottom: 24px;
+    }
+
+    h1 { margin: 0; font-size: clamp(28px, 4vw, 48px); letter-spacing: -1px; }
+    .subtitle { color: var(--muted); margin-top: 6px; }
+
+    .today-pill {
+      background: var(--card); padding: 12px 18px; border-radius: 999px;
+      box-shadow: var(--shadow); color: var(--accent); font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .grid { display: grid; grid-template-columns: 1.25fr .75fr; gap: 22px; }
+    .card {
+      background: var(--card); border: 1px solid rgba(255,255,255,.7);
+      border-radius: var(--radius); box-shadow: var(--shadow);
+      backdrop-filter: blur(12px); padding: 22px;
+    }
+
+    .calendar-head {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 18px; gap: 12px;
+    }
+
+    button, input, select, textarea {
+      font: inherit; border: 0; border-radius: 14px;
+    }
+
+    button {
+      background: var(--accent); color: white; padding: 11px 15px;
+      cursor: pointer; font-weight: 700; transition: .2s;
+    }
+    button:hover { transform: translateY(-1px); opacity: .92; }
+    .ghost { background: #efe4d6; color: var(--accent); }
+
+    .month-title { font-size: 24px; font-weight: 800; }
+
+    .weekdays, .days {
+      display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px;
+    }
+
+    .weekdays div {
+      text-align: center; font-weight: 800; color: var(--muted); font-size: 13px;
+      padding-bottom: 6px;
+    }
+
+    .day {
+      min-height: 92px; background: rgba(255,255,255,.62);
+      border-radius: 18px; padding: 10px; cursor: pointer;
+      border: 2px solid transparent; position: relative;
+    }
+    .day:hover { border-color: var(--accent2); }
+    .day.selected { border-color: var(--accent); background: #fff7ed; }
+    .day.out { opacity: .35; }
+    .day-number { font-weight: 800; }
+    .badge {
+      display: inline-block; margin-top: 8px; padding: 4px 7px; border-radius: 999px;
+      background: var(--green); color: white; font-size: 12px; font-weight: 700;
+    }
+
+    .side-title { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    h2 { margin: 0 0 14px; font-size: 24px; }
+
+    .form { display: grid; gap: 10px; margin-bottom: 18px; }
+    input, select, textarea {
+      width: 100%; padding: 12px 13px; background: rgba(255,255,255,.75);
+      color: var(--text); outline: 1px solid #eadfce;
+    }
+    textarea { resize: vertical; min-height: 76px; }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .task {
+      background: rgba(255,255,255,.72); border-radius: 17px; padding: 13px;
+      margin-bottom: 10px; border-left: 6px solid var(--accent2);
+    }
+    .task.done { opacity: .58; text-decoration: line-through; }
+    .task-top { display:flex; justify-content:space-between; gap:8px; align-items:start; }
+    .task-title { font-weight: 800; }
+    .task-meta { color: var(--muted); font-size: 13px; margin-top: 4px; }
+    .task-actions { display:flex; gap:7px; }
+    .small { padding: 7px 9px; border-radius: 10px; font-size: 12px; }
+    .danger { background: var(--red); }
+
+    .family {
+      display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 18px;
+    }
+    .chip {
+      background: #efe4d6; color: var(--accent); padding: 8px 12px;
+      border-radius: 999px; font-weight: 800; font-size: 13px;
+    }
+
+    .empty {
+      color: var(--muted); text-align: center; padding: 22px 8px;
+      background: rgba(255,255,255,.5); border-radius: 18px;
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      header { align-items: flex-start; flex-direction: column; }
+      .day { min-height: 72px; padding: 8px; }
+      .app { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <h1>Семейный ежедневник</h1>
+        <div class="subtitle">Планы, дела и важные события вашей семьи в одном месте</div>
+      </div>
+      <div class="today-pill" id="todayText"></div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="calendar-head">
+          <button class="ghost" onclick="changeMonth(-1)">←</button>
+          <div class="month-title" id="monthTitle"></div>
+          <button class="ghost" onclick="changeMonth(1)">→</button>
+        </div>
+        <div class="weekdays">
+          <div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>
+        </div>
+        <div class="days" id="days"></div>
+      </section>
+
+      <aside class="card">
+        <div class="side-title">
+          <h2 id="selectedTitle"></h2>
+          <button class="ghost small" onclick="goToday()">Сегодня</button>
+        </div>
+
+        <div class="family">
+          <span class="chip">Папа</span>
+          <span class="chip">Мама</span>
+          <span class="chip">Дети</span>
+          <span class="chip">Семья</span>
+        </div>
+
+        <div class="form">
+          <input id="taskTitle" placeholder="Например: ужин с семьей, врач, школа" />
+          <div class="row">
+            <select id="taskPerson">
+              <option>Семья</option>
+              <option>Папа</option>
+              <option>Мама</option>
+              <option>Дети</option>
+            </select>
+            <input id="taskTime" type="time" />
+          </div>
+          <textarea id="taskNote" placeholder="Заметка"></textarea>
+          <button onclick="addTask()">Добавить</button>
+        </div>
+
+        <div id="taskList"></div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const months = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+    let current = new Date();
+    let selected = new Date();
+    let tasks = JSON.parse(localStorage.getItem('familyPlannerTasks') || '{}');
+
+    function key(date) {
+      return date.getFullYear() + '-' + String(date.getMonth()+1).padStart(2,'0') + '-' + String(date.getDate()).padStart(2,'0');
+    }
+
+    function pretty(date) {
+      return date.toLocaleDateString('ru-RU', { weekday:'long', day:'numeric', month:'long' });
+    }
+
+    function save() {
+      localStorage.setItem('familyPlannerTasks', JSON.stringify(tasks));
+    }
+
+    function render() {
+      document.getElementById('todayText').textContent = 'Сегодня: ' + pretty(new Date());
+      document.getElementById('monthTitle').textContent = months[current.getMonth()] + ' ' + current.getFullYear();
+      document.getElementById('selectedTitle').textContent = pretty(selected);
+
+      const daysEl = document.getElementById('days');
+      daysEl.innerHTML = '';
+
+      const first = new Date(current.getFullYear(), current.getMonth(), 1);
+      const start = new Date(first);
+      const day = (first.getDay() + 6) % 7;
+      start.setDate(first.getDate() - day);
+
+      for (let i = 0; i < 42; i++) {
+        const d = new Date(start);
+        d.setDate(start.getDate() + i);
+        const div = document.createElement('div');
+        div.className = 'day';
+        if (d.getMonth() !== current.getMonth()) div.classList.add('out');
+        if (key(d) === key(selected)) div.classList.add('selected');
+
+        const count = (tasks[key(d)] || []).length;
+        div.innerHTML = `<div class="day-number">${d.getDate()}</div>${count ? `<span class="badge">${count} дел</span>` : ''}`;
+        div.onclick = () => { selected = d; render(); };
+        daysEl.appendChild(div);
+      }
+
+      renderTasks();
+    }
+
+    function renderTasks() {
+      const list = document.getElementById('taskList');
+      const dayTasks = tasks[key(selected)] || [];
+      list.innerHTML = '';
+
+      if (!dayTasks.length) {
+        list.innerHTML = '<div class="empty">На этот день пока нет дел</div>';
+        return;
+      }
+
+      dayTasks.sort((a,b) => (a.time || '99:99').localeCompare(b.time || '99:99'));
+
+      dayTasks.forEach((t, index) => {
+        const item = document.createElement('div');
+        item.className = 'task' + (t.done ? ' done' : '');
+        item.innerHTML = `
+          <div class="task-top">
+            <div>
+              <div class="task-title">${escapeHtml(t.title)}</div>
+              <div class="task-meta">${t.time ? t.time + ' · ' : ''}${escapeHtml(t.person)}</div>
+              ${t.note ? `<div class="task-meta">${escapeHtml(t.note)}</div>` : ''}
+            </div>
+            <div class="task-actions">
+              <button class="small ghost" onclick="toggleTask(${index})">✓</button>
+              <button class="small danger" onclick="deleteTask(${index})">×</button>
+            </div>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function addTask() {
+      const title = document.getElementById('taskTitle').value.trim();
+      if (!title) return;
+      const k = key(selected);
+      tasks[k] = tasks[k] || [];
+      tasks[k].push({
+        title,
+        person: document.getElementById('taskPerson').value,
+        time: document.getElementById('taskTime').value,
+        note: document.getElementById('taskNote').value.trim(),
+        done: false
+      });
+      document.getElementById('taskTitle').value = '';
+      document.getElementById('taskTime').value = '';
+      document.getElementById('taskNote').value = '';
+      save();
+      render();
+    }
+
+    function toggleTask(index) {
+      const k = key(selected);
+      tasks[k][index].done = !tasks[k][index].done;
+      save(); render();
+    }
+
+    function deleteTask(index) {
+      const k = key(selected);
+      tasks[k].splice(index, 1);
+      if (!tasks[k].length) delete tasks[k];
+      save(); render();
+    }
+
+    function changeMonth(n) {
+      current.setMonth(current.getMonth() + n);
+      render();
+    }
+
+    function goToday() {
+      current = new Date();
+      selected = new Date();
+      render();
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, s => ({
+        '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;'
+      }[s]));
+    }
+
+    render();
+  </script>
+</body>
+</html>
+"""
+
+path = Path("/mnt/data/family_daily_planner.html")
+path.write_text(html, encoding="utf-8")
+path.as_posix()
