@@ -3,148 +3,372 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Family Branch</title>
+  <title>Our Family Planner</title>
   <style>
     :root {
-      --bg: #f7f3ec;
-      --card: rgba(255,255,255,.82);
-      --text: #2e2b26;
-      --muted: #7b7369;
-      --accent: #9c6b3f;
-      --accent2: #e9c89f;
-      --green: #8aa37b;
-      --red: #cf7d6f;
-      --shadow: 0 20px 50px rgba(88, 63, 37, .15);
-      --radius: 24px;
+      --bg: #fbf7ef;
+      --card: rgba(255,255,255,.9);
+      --text: #2d2118;
+      --muted: #6f6a63;
+      --accent: #c46f2d;
+      --accent-dark: #9f541e;
+      --accent-soft: #f4e7d7;
+      --green: #74a765;
+      --red: #e95d4f;
+      --blue: #2878b8;
+      --shadow: 0 18px 45px rgba(93, 64, 37, .12);
+      --radius: 22px;
     }
 
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background:
-        radial-gradient(circle at top left, #fff2d8 0, transparent 34%),
-        radial-gradient(circle at bottom right, #dfe9d4 0, transparent 30%),
+        radial-gradient(circle at top left, #fff4df 0, transparent 32%),
+        radial-gradient(circle at bottom right, #edf4e8 0, transparent 30%),
         var(--bg);
       color: var(--text);
       min-height: 100vh;
     }
 
-    .app { max-width: 1220px; margin: auto; padding: 28px; }
-
-    header {
-      display: flex; justify-content: space-between; align-items: center;
-      gap: 16px; margin-bottom: 24px;
+    .app {
+      max-width: 1240px;
+      margin: auto;
+      padding: 30px 22px;
     }
 
-    h1 { margin: 0; font-size: clamp(28px, 4vw, 48px); letter-spacing: -1px; }
-    .subtitle { color: var(--muted); margin-top: 6px; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 26px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(36px, 5vw, 60px);
+      letter-spacing: -1.5px;
+      line-height: 1;
+    }
+
+    .subtitle {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 20px;
+    }
 
     .today-pill {
-      background: var(--card); padding: 12px 18px; border-radius: 999px;
-      box-shadow: var(--shadow); color: var(--accent); font-weight: 700;
+      background: var(--card);
+      border: 1px solid #eadcc9;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 18px 24px;
+      font-size: 18px;
       white-space: nowrap;
     }
 
-    .grid { display: grid; grid-template-columns: 1.25fr .75fr; gap: 22px; }
-    .card {
-      background: var(--card); border: 1px solid rgba(255,255,255,.7);
-      border-radius: var(--radius); box-shadow: var(--shadow);
-      backdrop-filter: blur(12px); padding: 22px;
+    .today-pill strong {
+      color: var(--accent);
     }
 
-    .calendar-head {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 18px; gap: 12px;
+    .grid {
+      display: grid;
+      grid-template-columns: 1.15fr .95fr;
+      gap: 28px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid #eadcc9;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px;
+      backdrop-filter: blur(10px);
+    }
+
+    .calendar-head,
+    .side-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .month-title {
+      font-size: 30px;
+      font-weight: 900;
     }
 
     button, input, select, textarea {
-      font: inherit; border: 0; border-radius: 14px;
+      font: inherit;
+      border: 0;
+      border-radius: 14px;
     }
 
     button {
-      background: var(--accent); color: white; padding: 11px 15px;
-      cursor: pointer; font-weight: 700; transition: .2s;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      color: white;
+      padding: 14px 18px;
+      cursor: pointer;
+      font-weight: 800;
+      transition: .2s;
     }
-    button:hover { transform: translateY(-1px); opacity: .92; }
-    .ghost { background: #efe4d6; color: var(--accent); }
 
-    .month-title { font-size: 24px; font-weight: 800; }
+    button:hover {
+      transform: translateY(-1px);
+      opacity: .94;
+    }
 
-    .weekdays, .days {
-      display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px;
+    .ghost {
+      background: var(--accent-soft);
+      color: var(--text);
+      min-width: 56px;
+    }
+
+    .small {
+      padding: 10px 13px;
+      border-radius: 12px;
+      font-size: 14px;
+    }
+
+    .weekdays,
+    .days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+    }
+
+    .weekdays {
+      gap: 8px;
+      margin-bottom: 10px;
     }
 
     .weekdays div {
-      text-align: center; font-weight: 800; color: var(--muted); font-size: 13px;
-      padding-bottom: 6px;
+      text-align: center;
+      font-weight: 900;
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    .days {
+      gap: 0;
+      border: 1px solid #eadcc9;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #fff;
     }
 
     .day {
-      min-height: 92px; background: rgba(255,255,255,.62);
-      border-radius: 18px; padding: 10px; cursor: pointer;
-      border: 2px solid transparent; position: relative;
+      min-height: 112px;
+      padding: 16px;
+      cursor: pointer;
+      border-right: 1px solid #eadcc9;
+      border-bottom: 1px solid #eadcc9;
+      position: relative;
+      background: rgba(255,255,255,.72);
     }
-    .day:hover { border-color: var(--accent2); }
-    .day.selected { border-color: var(--accent); background: #fff7ed; }
-    .day.out { opacity: .35; }
-    .day-number { font-weight: 800; }
+
+    .day:nth-child(7n) {
+      border-right: 0;
+    }
+
+    .day:hover {
+      background: #fff8ef;
+    }
+
+    .day.selected {
+      background: #fff3df;
+      outline: 2px solid #e6c49e;
+      outline-offset: -2px;
+    }
+
+    .day.out {
+      color: #aaa;
+      background: rgba(255,255,255,.42);
+    }
+
+    .day-number {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
     .badge {
-      display: inline-block; margin-top: 8px; padding: 4px 7px; border-radius: 999px;
-      background: var(--green); color: white; font-size: 12px; font-weight: 700;
+      display: inline-block;
+      margin-top: 12px;
+      min-width: 25px;
+      text-align: center;
+      padding: 5px 8px;
+      border-radius: 8px;
+      background: var(--green);
+      color: white;
+      font-size: 14px;
+      font-weight: 900;
     }
 
-    .side-title { display:flex; justify-content:space-between; align-items:center; gap:10px; }
-    h2 { margin: 0 0 14px; font-size: 24px; }
-
-    .form { display: grid; gap: 10px; margin-bottom: 18px; }
-    input, select, textarea {
-      width: 100%; padding: 12px 13px; background: rgba(255,255,255,.75);
-      color: var(--text); outline: 1px solid #eadfce;
+    h2 {
+      margin: 0;
+      font-size: 28px;
     }
-    textarea { resize: vertical; min-height: 76px; }
-
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-    .task {
-      background: rgba(255,255,255,.72); border-radius: 17px; padding: 13px;
-      margin-bottom: 10px; border-left: 6px solid var(--accent2);
-    }
-    .task.done { opacity: .58; text-decoration: line-through; }
-    .task-top { display:flex; justify-content:space-between; gap:8px; align-items:start; }
-    .task-title { font-weight: 800; }
-    .task-meta { color: var(--muted); font-size: 13px; margin-top: 4px; }
-    .task-actions { display:flex; gap:7px; }
-    .small { padding: 7px 9px; border-radius: 10px; font-size: 12px; }
-    .danger { background: var(--red); }
 
     .family {
-      display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
     }
+
     .chip {
-      background: #efe4d6; color: var(--accent); padding: 8px 12px;
-      border-radius: 999px; font-weight: 800; font-size: 13px;
+      background: #fff;
+      border: 1px solid #eadcc9;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-weight: 800;
+    }
+
+    .form {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 16px 18px;
+      background: #fff;
+      color: var(--text);
+      outline: 1px solid #eadcc9;
+      font-size: 17px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 110px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .section-title {
+      border-top: 1px solid #e7d8c5;
+      padding-top: 20px;
+      margin: 18px 0 14px;
+      font-size: 21px;
+      font-weight: 900;
+    }
+
+    .task {
+      background: #fff;
+      border: 1px solid #eadcc9;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 22px rgba(93, 64, 37, .06);
+    }
+
+    .task.done {
+      opacity: .55;
+      text-decoration: line-through;
+    }
+
+    .task-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .task-title {
+      font-weight: 900;
+      font-size: 18px;
+    }
+
+    .task-meta {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 7px;
+    }
+
+    .task-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .done-btn {
+      background: var(--green);
+    }
+
+    .danger {
+      background: #fff1ef;
+      color: var(--red);
+      border: 1px solid #ffc6bf;
     }
 
     .empty {
-      color: var(--muted); text-align: center; padding: 22px 8px;
-      background: rgba(255,255,255,.5); border-radius: 18px;
+      text-align: center;
+      color: var(--muted);
+      padding: 36px 18px;
+      background: #fff8ef;
+      border: 1px solid #eadcc9;
+      border-radius: 18px;
+      line-height: 1.6;
+      font-size: 18px;
+    }
+
+    .summary {
+      margin-top: 18px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 16px;
+    }
+
+    .summary-count {
+      background: var(--green);
+      color: white;
+      font-weight: 900;
+      padding: 7px 10px;
+      border-radius: 8px;
     }
 
     @media (max-width: 900px) {
-      .grid { grid-template-columns: 1fr; }
-      header { align-items: flex-start; flex-direction: column; }
-      .day { min-height: 72px; padding: 8px; }
-      .app { padding: 18px; }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .day {
+        min-height: 78px;
+        padding: 10px;
+      }
+
+      .day-number {
+        font-size: 18px;
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
+
 <body>
   <div class="app">
     <header>
       <div>
-        <h1>Planner</h1>
-        <div class="subtitle">Your family's plans, tasks, and important events all in one place.</div>
+        <h1>Our Family Planner</h1>
+        <div class="subtitle">All family plans, tasks, and events in one place</div>
       </div>
       <div class="today-pill" id="todayText"></div>
     </header>
@@ -156,16 +380,26 @@
           <div class="month-title" id="monthTitle"></div>
           <button class="ghost" onclick="changeMonth(1)">→</button>
         </div>
+
         <div class="weekdays">
-          <div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>
+          <div>MON</div>
+          <div>TUE</div>
+          <div>WED</div>
+          <div>THU</div>
+          <div>FRI</div>
+          <div>SAT</div>
+          <div>SUN</div>
         </div>
+
         <div class="days" id="days"></div>
+
+        <div class="summary" id="summaryText"></div>
       </section>
 
       <aside class="card">
         <div class="side-title">
           <h2 id="selectedTitle"></h2>
-          <button class="ghost small" onclick="goToday()">Сегодня</button>
+          <button class="ghost small" onclick="goToday()">Today</button>
         </div>
 
         <div class="family">
@@ -176,7 +410,8 @@
         </div>
 
         <div class="form">
-          <input id="taskTitle" placeholder="Например: ужин с семьей, врач, школа" />
+          <input id="taskTitle" placeholder="e.g. Dinner with family, Doctor, School..." />
+
           <div class="row">
             <select id="taskPerson">
               <option>Family</option>
@@ -184,29 +419,44 @@
               <option>Mom</option>
               <option>Kids</option>
             </select>
+
             <input id="taskTime" type="time" />
           </div>
-          <textarea id="taskNote" placeholder="Заметка"></textarea>
-          <button onclick="addTask()">Add</button>
+
+          <textarea id="taskNote" placeholder="Notes"></textarea>
+
+          <button onclick="addTask()">Add Task</button>
         </div>
 
+        <div class="section-title" id="taskSectionTitle">Tasks for this day</div>
         <div id="taskList"></div>
       </aside>
     </div>
   </div>
 
   <script>
-    const months = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
     let current = new Date();
     let selected = new Date();
     let tasks = JSON.parse(localStorage.getItem('familyPlannerTasks') || '{}');
 
     function key(date) {
-      return date.getFullYear() + '-' + String(date.getMonth()+1).padStart(2,'0') + '-' + String(date.getDate()).padStart(2,'0');
+      return date.getFullYear() + '-' +
+        String(date.getMonth() + 1).padStart(2, '0') + '-' +
+        String(date.getDate()).padStart(2, '0');
     }
 
     function pretty(date) {
-      return date.toLocaleDateString('ru-RU', { weekday:'long', day:'numeric', month:'long' });
+      return date.toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+      });
     }
 
     function save() {
@@ -214,8 +464,16 @@
     }
 
     function render() {
-      document.getElementById('todayText').textContent = 'Сегодня: ' + pretty(new Date());
-      document.getElementById('monthTitle').textContent = months[current.getMonth()] + ' ' + current.getFullYear();
+      document.getElementById('todayText').innerHTML =
+        '<strong>Today:</strong> ' + new Date().toLocaleDateString('en-US', {
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric'
+        });
+
+      document.getElementById('monthTitle').textContent =
+        months[current.getMonth()] + ' ' + current.getFullYear();
+
       document.getElementById('selectedTitle').textContent = pretty(selected);
 
       const daysEl = document.getElementById('days');
@@ -229,14 +487,24 @@
       for (let i = 0; i < 42; i++) {
         const d = new Date(start);
         d.setDate(start.getDate() + i);
+
         const div = document.createElement('div');
         div.className = 'day';
+
         if (d.getMonth() !== current.getMonth()) div.classList.add('out');
         if (key(d) === key(selected)) div.classList.add('selected');
 
         const count = (tasks[key(d)] || []).length;
-        div.innerHTML = `<div class="day-number">${d.getDate()}</div>${count ? `<span class="badge">${count} дел</span>` : ''}`;
-        div.onclick = () => { selected = d; render(); };
+
+        div.innerHTML =
+          `<div class="day-number">${d.getDate()}</div>` +
+          (count ? `<span class="badge">${count}</span>` : '');
+
+        div.onclick = () => {
+          selected = d;
+          render();
+        };
+
         daysEl.appendChild(div);
       }
 
@@ -246,31 +514,51 @@
     function renderTasks() {
       const list = document.getElementById('taskList');
       const dayTasks = tasks[key(selected)] || [];
+
       list.innerHTML = '';
 
+      document.getElementById('taskSectionTitle').textContent =
+        `Tasks for this day (${dayTasks.length})`;
+
+      document.getElementById('summaryText').innerHTML =
+        dayTasks.length
+          ? `<span class="summary-count">${dayTasks.length}</span> ${dayTasks.length === 1 ? 'task' : 'tasks'} on this day`
+          : `<span class="summary-count">0</span> No tasks on this day`;
+
       if (!dayTasks.length) {
-        list.innerHTML = '<div class="empty">На этот день пока нет дел</div>';
+        list.innerHTML = `
+          <div class="empty">
+            No tasks scheduled for this day.<br>
+            Enjoy your day! 🌿
+          </div>
+        `;
         return;
       }
 
-      dayTasks.sort((a,b) => (a.time || '99:99').localeCompare(b.time || '99:99'));
+      dayTasks.sort((a, b) => (a.time || '99:99').localeCompare(b.time || '99:99'));
 
       dayTasks.forEach((t, index) => {
         const item = document.createElement('div');
         item.className = 'task' + (t.done ? ' done' : '');
+
         item.innerHTML = `
           <div class="task-top">
             <div>
               <div class="task-title">${escapeHtml(t.title)}</div>
-              <div class="task-meta">${t.time ? t.time + ' · ' : ''}${escapeHtml(t.person)}</div>
+              <div class="task-meta">
+                ${t.time ? '🕘 ' + t.time + ' · ' : ''}
+                👤 ${escapeHtml(t.person)}
+              </div>
               ${t.note ? `<div class="task-meta">${escapeHtml(t.note)}</div>` : ''}
             </div>
+
             <div class="task-actions">
-              <button class="small ghost" onclick="toggleTask(${index})">✓</button>
-              <button class="small danger" onclick="deleteTask(${index})">×</button>
+              <button class="small done-btn" onclick="toggleTask(${index})">✓</button>
+              <button class="small danger" onclick="deleteTask(${index})">🗑</button>
             </div>
           </div>
         `;
+
         list.appendChild(item);
       });
     }
@@ -278,8 +566,10 @@
     function addTask() {
       const title = document.getElementById('taskTitle').value.trim();
       if (!title) return;
+
       const k = key(selected);
       tasks[k] = tasks[k] || [];
+
       tasks[k].push({
         title,
         person: document.getElementById('taskPerson').value,
@@ -287,9 +577,11 @@
         note: document.getElementById('taskNote').value.trim(),
         done: false
       });
+
       document.getElementById('taskTitle').value = '';
       document.getElementById('taskTime').value = '';
       document.getElementById('taskNote').value = '';
+
       save();
       render();
     }
@@ -297,14 +589,18 @@
     function toggleTask(index) {
       const k = key(selected);
       tasks[k][index].done = !tasks[k][index].done;
-      save(); render();
+      save();
+      render();
     }
 
     function deleteTask(index) {
       const k = key(selected);
       tasks[k].splice(index, 1);
+
       if (!tasks[k].length) delete tasks[k];
-      save(); render();
+
+      save();
+      render();
     }
 
     function changeMonth(n) {
@@ -320,7 +616,11 @@
 
     function escapeHtml(str) {
       return String(str).replace(/[&<>"']/g, s => ({
-        '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;'
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
       }[s]));
     }
 
